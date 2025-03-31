@@ -3,8 +3,10 @@ import { hideBin } from "yargs/helpers";
 import { FunkoType } from "../enums/funkoType.js";
 import { FunkoGenres } from "../enums/funkoGenres.js";
 import { Funko} from "../models/cFunko.js";
-import { FunkoCollection } from "../models/cFunkoManager.js";
+import { RequestType } from "../types/requestType.js";
+import { FunkoClient } from "../models/cClient.js";
 
+const client = new FunkoClient("localhost", 60300);
 
 yargs(hideBin(process.argv))
   .command(
@@ -38,8 +40,12 @@ yargs(hideBin(process.argv))
         args.feats,
         args.value
       );
-      const collection = new FunkoCollection(args.user);
-      collection.addFunko(funko);
+      const request: RequestType = {
+        type: "add",
+        username: args.user,
+        funkos: [funko],
+      };
+      client.sendRequest(request);
     }
   )
   .command(
@@ -52,8 +58,12 @@ yargs(hideBin(process.argv))
       });
     },
     (args) => {
-      const collection = new FunkoCollection(args.user);
-      collection.removeFunko(args.id);
+      const request: RequestType = {
+        type: "remove",
+        username: args.user,
+        funkoid: args.id,
+      };
+      client.sendRequest(request);
     }
   )
   .command(
@@ -65,8 +75,11 @@ yargs(hideBin(process.argv))
       });
     },
     (args) => {
-      const collection = new FunkoCollection(args.user);
-      collection.listFunkos();
+      const request: RequestType = {
+        type: "list",
+        username: args.user,
+      };
+      client.sendRequest(request);
     }
   )
   .command(
@@ -79,8 +92,12 @@ yargs(hideBin(process.argv))
       });
     },
     (args) => {
-      const collection = new FunkoCollection(args.user);
-      collection.showFunko(args.id);
+      const request: RequestType = {
+        type: "show",
+        username: args.user,
+        funkoid: args.id,
+      };
+      client.sendRequest(request);
     }
   )
   .command(
@@ -114,8 +131,12 @@ yargs(hideBin(process.argv))
         args.feats,
         args.value
       );
-      const collection = new FunkoCollection(args.user);
-      collection.modifyFunko(funko);
+      const request: RequestType = {
+        type: "modify",
+        username: args.user,
+        funkos: [funko],
+      };
+      client.sendRequest(request);
     }
   )
   .help()
